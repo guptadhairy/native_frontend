@@ -1,10 +1,17 @@
 import { View, Text, SafeAreaView, StatusBar, Platform, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Task from '../components/Task'
 import Icon from "react-native-vector-icons/Entypo"
 import { Button, Dialog } from 'react-native-paper'
+import { useDispatch, useSelector } from 'react-redux'
+import { addTask, loadUser } from '../redux/action'
 
 const Home = ({navigation}) => {
+
+    const {user} = useSelector(state => state.auth);
+
+    const dispatch = useDispatch();
+    const {loading, message, error} = useSelector(state => state.message);
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -13,18 +20,22 @@ const Home = ({navigation}) => {
     const hideDialog = ()=> {
         setOpenDialog(!openDialog);
     }
-    const addTaskHandler = ()=> {
-        console.log("Added successfully")
+    const addTaskHandler = async()=> {
+        await dispatch(addTask(title, description));
+        dispatch(loadUser());
     }
 
-    const tasks = [{
-        title: "Task 1", description: "Sample Task", completed: false, _id: "sdfghj"
-    },
-    {
-        title: "Task 2", description: "Sample Task2", completed: true, _id: "sdfghj12"
-    },
-    
-];
+    useEffect(()=> {
+        if(error) {
+            alert(error);
+            dispatch({type: "clearError"});
+        }
+        if(message) {
+            alert(message);
+            dispatch({type: "clearMessage"});
+        }
+    },[alert,error,message,dispatch]);
+
   return (
     <>
     <ScrollView>
@@ -32,7 +43,7 @@ const Home = ({navigation}) => {
       <SafeAreaView>
       <Text style={styles.heading}>All Tasks</Text>
       {
-        tasks.map((item) => (
+        user && user.tasks.map((item) => (
             <Task key={item._id} title={item.title} description={item.description} status={item.completed} taskId={item._id} />
         ))
       }
@@ -48,8 +59,8 @@ const Home = ({navigation}) => {
             Add New Task
         </Dialog.Title>
         <Dialog.Content>
-            <TextInput value={title} onChange={setTitle} style={styles.input} placeholder='Title' />
-            <TextInput value={description} onChange={setDescription} style={styles.input} placeholder='Description'/>
+            <TextInput value={title} onChangeText={setTitle} style={styles.input} placeholder='Title' />
+            <TextInput value={description} onChangeText={setDescription} style={styles.input} placeholder='Description'/>
             <View style={{flexDirection: "row", alignItems: "center"}}>
                 <TouchableOpacity onPress={hideDialog}>
                     <Text>CANCEL</Text>

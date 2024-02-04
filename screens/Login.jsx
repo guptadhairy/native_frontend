@@ -1,13 +1,25 @@
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from 'react-native-paper'
+import { useDispatch, useSelector } from 'react-redux'
+import { login } from '../redux/action'
 
 const Login = ({navigation}) => {
+  const {error} = useSelector(state=>state.auth)
+
+  const dispatch = useDispatch();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const loginHandler = () => {
-        console.log("Logged in")
+        dispatch(login(email, password));
     }
+    useEffect(()=>{
+      if(error) {
+        alert(error)
+        dispatch({type: "clearError"})
+      }
+    }, [error, dispatch, alert])
   return (
     <View style={{
         flex: 1,
