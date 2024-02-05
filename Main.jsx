@@ -12,6 +12,7 @@ import Camera from './screens/Camera';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadUser } from './redux/action';
 import Loader from './components/Loader';
+import ChangePassword from './screens/ChangePassword';
 
 
 
@@ -33,8 +34,9 @@ const Main = () => {
             <Stack.Screen name='login' component={Login} options={{headerShown: false}}/>
             <Stack.Screen name='register' component={Register} options={{headerShown: false}}/>
             <Stack.Screen name='forgetpassword' component={ForgetPassword} />
-            <Stack.Screen name='profile' component={Profile} />
+            <Stack.Screen name='profile' component={Profile} options={{headerShown: false}} />
             <Stack.Screen name='camera' component={Camera}/>
+            <Stack.Screen name='changepassword' component={ChangePassword}/>
         </Stack.Navigator>
         {isAuthenticated && <Footer />}
     </NavigationContainer>
